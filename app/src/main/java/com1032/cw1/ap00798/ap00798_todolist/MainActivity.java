@@ -1,12 +1,15 @@
 package com1032.cw1.ap00798.ap00798_todolist;
 
+import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,8 +19,7 @@ import android.widget.LinearLayout;
 public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton bigFab;
-    private LinearLayout fabSubmenuElement_add;
-    private LinearLayout fabSubmenuElement_deleteAll;
+    private LinearLayout[] fabSubmenuElements = new LinearLayout[2];
 
     private boolean isFabOpen = true;
 
@@ -34,8 +36,35 @@ public class MainActivity extends AppCompatActivity {
 
         getLayoutInflater().inflate(R.layout.layout_fab, view, true);
 
-        fabSubmenuElement_add = (LinearLayout) findViewById(R.id.fabAddTaskItem);
-        fabSubmenuElement_deleteAll = (LinearLayout) findViewById(R.id.fabDeleteAllItem);
+        fabSubmenuElements[0] = (LinearLayout) findViewById(R.id.fabAddTaskItem);
+        fabSubmenuElements[1] = (LinearLayout) findViewById(R.id.fabDeleteAllItem);
+
+        // Delete All button
+        fabSubmenuElements[1].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Delete all tasks");
+                builder.setMessage("Are you sure you want to delete everything?");
+                builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int which) {
+                            // TODO: Delete all tasks
+                        }
+                    });
+                builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int which) {
+                            // Dismiss dialog without doing anything else
+                            dialogInterface.cancel();
+                        }
+                    });
+                builder.setIcon(R.drawable.ic_delete_black_24dp);
+
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
 
         bigFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,8 +104,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openFabSubmenu() {
-        fabSubmenuElement_add.setVisibility(View.VISIBLE);
-        fabSubmenuElement_deleteAll.setVisibility(View.VISIBLE);
+        for (LinearLayout fabSubmenuElement : this.fabSubmenuElements) {
+            fabSubmenuElement.setVisibility(View.VISIBLE);
+        }
         Drawable bigFabCloseIcon = (Drawable) ContextCompat.getDrawable(this, R.drawable.ic_close_black_24dp);
 
         // Icon is black, so set it to white here (white = 0xffffffff)
@@ -87,8 +117,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void closeFabSubmenu() {
-        fabSubmenuElement_add.setVisibility(View.INVISIBLE);
-        fabSubmenuElement_deleteAll.setVisibility(View.INVISIBLE);
+        for (LinearLayout fabSubmenuElement : this.fabSubmenuElements) {
+            fabSubmenuElement.setVisibility(View.INVISIBLE);
+        }
         Drawable bigFabMenuIcon = (Drawable) ContextCompat.getDrawable(this, R.drawable.ic_menu_black_24dp);
 
         // Again, this vector is black so set to white
