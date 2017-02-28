@@ -4,12 +4,9 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewGroupCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton bigFab;
     private LinearLayout fabSubmenuElement_add;
+    private LinearLayout fabSubmenuElement_deleteAll;
 
     private boolean isFabOpen = true;
 
@@ -33,7 +31,12 @@ public class MainActivity extends AppCompatActivity {
         ViewGroup view = (ViewGroup) this.findViewById(android.R.id.content);
 
         bigFab = (FloatingActionButton) this.findViewById(R.id.fab);
-        fabSubmenuElement_add = (LinearLayout) getLayoutInflater().inflate(R.layout.layout_fab, view, true).findViewById(R.id.fabAddTaskItem);
+
+        getLayoutInflater().inflate(R.layout.layout_fab, view, true);
+
+        fabSubmenuElement_add = (LinearLayout) findViewById(R.id.fabAddTaskItem);
+        fabSubmenuElement_deleteAll = (LinearLayout) findViewById(R.id.fabDeleteAllItem);
+
         bigFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void openFabSubmenu() {
         fabSubmenuElement_add.setVisibility(View.VISIBLE);
+        fabSubmenuElement_deleteAll.setVisibility(View.VISIBLE);
         Drawable bigFabCloseIcon = (Drawable) ContextCompat.getDrawable(this, R.drawable.ic_close_black_24dp);
 
         // Icon is black, so set it to white here (white = 0xffffffff)
@@ -84,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void closeFabSubmenu() {
         fabSubmenuElement_add.setVisibility(View.INVISIBLE);
+        fabSubmenuElement_deleteAll.setVisibility(View.INVISIBLE);
         Drawable bigFabMenuIcon = (Drawable) ContextCompat.getDrawable(this, R.drawable.ic_menu_black_24dp);
 
         // Again, this vector is black so set to white
