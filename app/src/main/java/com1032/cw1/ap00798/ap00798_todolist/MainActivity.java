@@ -100,7 +100,24 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
 
         // Set the adapter for the recycler view, with an empty TodoList array list
-        mRecyclerViewAdapter = new TodoListAdapter(new ArrayList<TodoList>());
+        //TODO: Delete this test
+        TodoList myList = new TodoList("Shopping list");
+        TodoList myList2 = new TodoList("PC parts list");
+        TodoList myList3 = new TodoList("Surrey lectures");
+        TodoList myList4 = new TodoList("other list");
+        TodoList myList5 = new TodoList("Birthday ideas");
+        myList.addItemToList("bread");
+        myList2.addItemToList("intel cpu");
+        myList2.addItemToList("mobo");
+        myList2.addItemToList("Nvidia GTX 1080 Ti");
+        ArrayList<TodoList> todoLists = new ArrayList<>();
+        todoLists.add(myList);
+        todoLists.add(myList2);
+        todoLists.add(myList3);
+        todoLists.add(myList4);
+        todoLists.add(myList5);
+
+        mRecyclerViewAdapter = new TodoListAdapter(getApplicationContext(), todoLists);
         mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
         this.closeFabSubmenu();
