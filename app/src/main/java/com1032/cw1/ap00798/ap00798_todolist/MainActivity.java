@@ -11,17 +11,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
-    private FloatingActionButton bigFab;
-    private LinearLayout[] fabSubmenuElements = new LinearLayout[2];
+    private FloatingActionButton mBigFab;
+    private LinearLayout[] mFabSubmenuElements = new LinearLayout[2];
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mRecyclerViewAdapter;
+    private LinearLayoutManager mLLM;
 
     private boolean isFabOpen = true;
 
@@ -32,17 +37,25 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ViewGroup view = (ViewGroup) this.findViewById(android.R.id.content);
+        ViewGroup mView = (ViewGroup) this.findViewById(android.R.id.content);
 
-        bigFab = (FloatingActionButton) this.findViewById(R.id.fab);
+        mBigFab = (FloatingActionButton) this.findViewById(R.id.fab);
 
-        getLayoutInflater().inflate(R.layout.layout_fab, view, true);
+        // Set up Recycler View and its layout manager, configure
+        mRecyclerView = (RecyclerView) this.findViewById(R.id.todoListRecyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        mLLM = new LinearLayoutManager(this);
+        mLLM.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(mLLM);
 
-        fabSubmenuElements[0] = (LinearLayout) findViewById(R.id.fabAddTaskItem);
-        fabSubmenuElements[1] = (LinearLayout) findViewById(R.id.fabDeleteAllItem);
+
+        getLayoutInflater().inflate(R.layout.layout_fab, mView, true);
+
+        mFabSubmenuElements[0] = (LinearLayout) findViewById(R.id.fabAddTaskItem);
+        mFabSubmenuElements[1] = (LinearLayout) findViewById(R.id.fabDeleteAllItem);
 
         // Delete All button
-        fabSubmenuElements[1].setOnClickListener(new View.OnClickListener() {
+        mFabSubmenuElements[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -68,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        bigFab.setOnClickListener(new View.OnClickListener() {
+        mBigFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (isFabOpen) {
@@ -80,11 +93,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Set up Recycler View and its layout manager
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.todoListRecyclerView);
+        mRecyclerView = (RecyclerView) findViewById(R.id.todoListRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setHasFixedSize(true);
+
+        // Set the adapter for the recycler view, with an empty TodoList array list
+        mRecyclerViewAdapter = new TodoListAdapter(new ArrayList<TodoList>());
+        mRecyclerView.setAdapter(mRecyclerViewAdapter);
 
         this.closeFabSubmenu();
 
@@ -113,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openFabSubmenu() {
-        for (LinearLayout fabSubmenuElement : this.fabSubmenuElements) {
+        for (LinearLayout fabSubmenuElement : this.mFabSubmenuElements) {
             fabSubmenuElement.setVisibility(View.VISIBLE);
         }
         Drawable bigFabCloseIcon = (Drawable) ContextCompat.getDrawable(this, R.drawable.ic_close_black_24dp);
@@ -121,12 +138,12 @@ public class MainActivity extends AppCompatActivity {
         // Icon is black, so set it to white here (white = 0xffffffff)
         bigFabCloseIcon.setColorFilter(0xFFFFFFFF, PorterDuff.Mode.SRC_ATOP);
 
-        bigFab.setImageDrawable(bigFabCloseIcon);
+        mBigFab.setImageDrawable(bigFabCloseIcon);
         isFabOpen = true;
     }
 
     private void closeFabSubmenu() {
-        for (LinearLayout fabSubmenuElement : this.fabSubmenuElements) {
+        for (LinearLayout fabSubmenuElement : this.mFabSubmenuElements) {
             fabSubmenuElement.setVisibility(View.INVISIBLE);
         }
         Drawable bigFabMenuIcon = (Drawable) ContextCompat.getDrawable(this, R.drawable.ic_menu_black_24dp);
@@ -134,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         // Again, this vector is black so set to white
         bigFabMenuIcon.setColorFilter(0xFFFFFFFF, PorterDuff.Mode.SRC_ATOP);
 
-        bigFab.setImageDrawable(bigFabMenuIcon);
+        mBigFab.setImageDrawable(bigFabMenuIcon);
         isFabOpen = false;
     }
 }
