@@ -3,6 +3,7 @@ package com1032.cw1.ap00798.ap00798_todolist;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * This is a Singleton class that keeps track of all of the separate TodoList items.
  * Never instantiate this explicitly, but get the single instance by calling getManagerInstance().
  */
-public class TodoListManager {
+public class TodoListManager implements Serializable {
 
     private static TodoListManager manager;
     private static List<TodoList> todoLists = new ArrayList<TodoList>();

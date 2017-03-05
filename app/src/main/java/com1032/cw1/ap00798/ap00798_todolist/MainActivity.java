@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        todoListManagerInstance = TodoListManager.getManagerInstance();
 
         ViewGroup mView = (ViewGroup) this.findViewById(android.R.id.content);
 
@@ -74,7 +77,9 @@ public class MainActivity extends AppCompatActivity {
                 builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int which) {
-                            // TODO: Delete all tasks
+                            // Delete all tasks, update adapter for new data
+                            todoListManagerInstance.removeAllTodoLists();
+                            mRecyclerViewAdapter.notifyDataSetChanged();
                         }
                     });
                 builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

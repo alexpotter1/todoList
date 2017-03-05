@@ -1,9 +1,10 @@
 package com1032.cw1.ap00798.ap00798_todolist;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TodoList {
+public class TodoList implements Serializable {
 
     private String todoListName;
     private List<String> todoListItems;

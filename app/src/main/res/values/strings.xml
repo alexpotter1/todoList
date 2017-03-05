@@ -9,4 +9,8 @@
     <string name="list_items_0">Nothing in the list</string>
     <string name="delete_tasks">Delete all tasks</string>
     <string name="delete_tasks_info">Are you sure you want to delete everything?</string>
+    <string name="add_new_list_activity_ListNameTextViewContent">List Name</string>
+    <string name="add_new_list_activity_ButtonContent">Done</string>
+    <string name="add_new_list_activity_EditTextHint">Type a name&#8230;</string>
+    <string name="add_new_list_emptyEditText_snackbar">Please type a name for your new list.</string>
 </resources>
