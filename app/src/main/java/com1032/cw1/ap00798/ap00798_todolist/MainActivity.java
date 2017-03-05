@@ -1,6 +1,7 @@
 package com1032.cw1.ap00798.ap00798_todolist;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -17,8 +18,6 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton mBigFab;
@@ -27,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private LinearLayoutManager mLLM;
+
+    private TodoListManager todoListManagerInstance;
 
     private boolean isFabOpen = true;
 
@@ -54,13 +55,22 @@ public class MainActivity extends AppCompatActivity {
         mFabSubmenuElements[0] = (LinearLayout) findViewById(R.id.fabAddTaskItem);
         mFabSubmenuElements[1] = (LinearLayout) findViewById(R.id.fabDeleteAllItem);
 
+        // Add task button
+        mFabSubmenuElements[0].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), AddNewTodoListActivity.class);
+                startActivity(intent);
+            }
+        });
+
         // Delete All button
         mFabSubmenuElements[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Delete all tasks");
-                builder.setMessage("Are you sure you want to delete everything?");
+                builder.setTitle(R.string.delete_tasks);
+                builder.setMessage(R.string.delete_tasks_info);
                 builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int which) {
@@ -99,26 +109,8 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        // Set the adapter for the recycler view, with an empty TodoList array list
-        //TODO: Delete this test
-        TodoList myList = new TodoList("Shopping list");
-        TodoList myList2 = new TodoList("PC parts list");
-        TodoList myList3 = new TodoList("Surrey lectures");
-        TodoList myList4 = new TodoList("other list");
-        TodoList myList5 = new TodoList("Birthday ideas");
-        myList.addItemToList("bread");
-        myList2.addItemToList("intel cpu");
-        myList2.addItemToList("mobo");
-        myList2.addItemToList("Nvidia GTX 1080 Ti");
-        ArrayList<TodoList> todoLists = new ArrayList<>();
-        todoLists.add(myList);
-        todoLists.add(myList2);
-        todoLists.add(myList3);
-        todoLists.add(myList4);
-        todoLists.add(myList5);
-
-        mRecyclerViewAdapter = new TodoListAdapter(getApplicationContext(), todoLists);
-        mRecyclerView.setAdapter(mRecyclerViewAdapter);
+        // Set the adapter for the RecyclerView (via the manager)
+        mRecyclerViewAdapter = TodoListManager.setupTodoListAdapterForRecyclerView(this, mRecyclerView);
 
         this.closeFabSubmenu();
 

@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">ap00798_todoList</string>
+    <string name="add_new_list_activity_name">Add New List</string>
     <string name="action_settings">Settings</string>
     <string name="fab_addTask_text">Add Task</string>
     <string name="fab_deleteAll_text">Delete All</string>
     <string name="list_items_2_plus">%1$d items in the list</string>
     <string name="list_items_1">%1$d item in the list</string>
     <string name="list_items_0">Nothing in the list</string>
+    <string name="delete_tasks">Delete all tasks</string>
+    <string name="delete_tasks_info">Are you sure you want to delete everything?</string>
 </resources>

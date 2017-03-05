@@ -15,6 +15,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
     private List<TodoList> todoLists;
     private Context context;
 
+    // State of each CardView (and subsequent items) that is displayed in the Recycler View
     protected static class ViewHolder extends RecyclerView.ViewHolder {
 
         protected CardView cv;

@@ -18,6 +18,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AddNewTodoListActivity"
+                  android:parentActivityName=".MainActivity"
+                  android:label="@string/add_new_list_activity_name"
+                  android:theme="@style/AppTheme">
+        </activity>
     </application>
 
 </manifest>
