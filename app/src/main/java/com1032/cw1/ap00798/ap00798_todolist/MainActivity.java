@@ -1,28 +1,23 @@
 package com1032.cw1.ap00798.ap00798_todolist;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -32,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout[] mFabSubmenuElements = new LinearLayout[2];
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mRecyclerViewAdapter;
+    private static TodoListAdapter mRecyclerViewAdapter;
     private LinearLayoutManager mLLM;
 
     private TodoListManager todoListManagerInstance;
@@ -70,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), AddNewTodoListActivity.class);
+                closeFabSubmenu();
                 startActivity(intent);
             }
         });
@@ -122,16 +118,6 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
 
         // Set the adapter for the RecyclerView (via the manager)
-        todoListManagerInstance.createNewTodoList("list 1");
-        todoListManagerInstance.createNewTodoList("list 2");
-        todoListManagerInstance.createNewTodoList("list 3");
-        todoListManagerInstance.createNewTodoList("list 4");
-        todoListManagerInstance.createNewTodoList("list 5");
-        todoListManagerInstance.createNewTodoList("list 6");
-        todoListManagerInstance.createNewTodoList("list 7");
-        todoListManagerInstance.createNewTodoList("list 8");
-        todoListManagerInstance.createNewTodoList("list 9");
-        todoListManagerInstance.createNewTodoList("list 10");
         mRecyclerViewAdapter = TodoListManager.setupTodoListAdapterForRecyclerView(this, mRecyclerView);
 
         this.closeFabSubmenu();
@@ -216,5 +202,9 @@ public class MainActivity extends AppCompatActivity {
 
         mBigFab.setImageDrawable(bigFabMenuIcon);
         isFabOpen = false;
+    }
+
+    protected static TodoListAdapter getAdapter() {
+        return mRecyclerViewAdapter;
     }
 }

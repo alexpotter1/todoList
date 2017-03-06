@@ -15,6 +15,7 @@ public class TodoListManager implements Serializable {
 
     private static TodoListManager manager;
     private static List<TodoList> todoLists = new ArrayList<TodoList>();
+    private static TodoListAdapter mRecyclerViewAdapter = null;
 
     private TodoListManager() {}
 
@@ -42,9 +43,16 @@ public class TodoListManager implements Serializable {
 
         // If the name is acceptable...
         todoLists.add(new TodoList(todoListName));
+
+        if (mRecyclerViewAdapter == null) {
+            throw new RuntimeException("Run setupTodoListAdapterForRecyclerView first!");
+        }
+
+        mRecyclerViewAdapter.updateDataset(todoLists);
     }
 
     public void removeTodoList(String todoListName) {
+
         for (TodoList todoList : todoLists) {
             if (todoList.getTodoListName().equals(todoListName)) {
                 todoLists.remove(todoList);
@@ -53,11 +61,23 @@ public class TodoListManager implements Serializable {
                 break;
             }
         }
+
+        if (mRecyclerViewAdapter == null) {
+            throw new RuntimeException("Run setupTodoListAdapterForRecyclerView first!");
+        }
+
+        mRecyclerViewAdapter.updateDataset(todoLists);
     }
 
     public void removeAllTodoLists() {
         // Easiest way?
         todoLists = new ArrayList<TodoList>();
+
+        if (mRecyclerViewAdapter == null) {
+            throw new RuntimeException("Run setupTodoListAdapterForRecyclerView first!");
+        }
+
+        mRecyclerViewAdapter.updateDataset(todoLists);
     }
 
     public TodoList getTodoList(String todoListName) {
@@ -78,9 +98,9 @@ public class TodoListManager implements Serializable {
      * @param recyclerView - needed for the TodoListAdapter
      * @return mRecyclerViewAdapter - the new TodoListAdapter that was created (so the activity can use it)
      */
-    public static RecyclerView.Adapter setupTodoListAdapterForRecyclerView(Context mContext, RecyclerView recyclerView) {
+    public static TodoListAdapter setupTodoListAdapterForRecyclerView(Context mContext, RecyclerView recyclerView) {
 
-        RecyclerView.Adapter mRecyclerViewAdapter = new TodoListAdapter(mContext, todoLists);
+        mRecyclerViewAdapter = new TodoListAdapter(mContext, todoLists);
         recyclerView.setAdapter(mRecyclerViewAdapter);
 
         return mRecyclerViewAdapter;

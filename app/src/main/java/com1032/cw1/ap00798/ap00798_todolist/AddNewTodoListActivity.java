@@ -13,6 +13,7 @@ public class AddNewTodoListActivity extends AppCompatActivity {
 
     private Button mDoneButton;
     private EditText mEditTextField;
+    private TodoListManager todoListManagerInstance = TodoListManager.getManagerInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,13 +26,17 @@ public class AddNewTodoListActivity extends AppCompatActivity {
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                String listName = mEditTextField.getText().toString();
+                TodoListAdapter mRecyclerViewAdapter = MainActivity.getAdapter();
+
                 // Let the user know they have to actually type something...
 
                 /*
                  Snackbar was introduced in Marshmallow (API 23), so display this if the device supports it,
                  else just display a toast.
                   */
-                if (mEditTextField.getText().toString().equals("")) {
+                if (listName.equals("")) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         // Will execute on devices running Marshmallow or newer
                         Snackbar.make(view, R.string.add_new_list_emptyEditText_snackbar, Snackbar.LENGTH_LONG).show();
@@ -41,6 +46,10 @@ public class AddNewTodoListActivity extends AppCompatActivity {
                     }
                 }
 
+                // Make a new list, with no items
+                todoListManagerInstance.createNewTodoList(listName);
+                mRecyclerViewAdapter.notifyDataSetChanged();
+                finish();
 
 
             }
