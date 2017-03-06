@@ -22,16 +22,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/todoCard_ListName"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:textSize="35dp"/>
+                android:textSize="35sp"
+                android:fontFamily="sans-serif-light"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/todoCard_ListItemCount"
                 android:layout_below="@+id/todoCard_ListName"
-                android:textSize="15dp"/>
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-condensed"/>
             
             <ImageButton
                 android:layout_width="12dp"
@@ -40,7 +42,7 @@
                 android:src="@drawable/ic_close_black_24dp"
                 android:contentDescription="@string/ImageButton_accessibility_contentDesc"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"/>
+                android:layout_alignParentEnd="true"/>
 
         </RelativeLayout>
 

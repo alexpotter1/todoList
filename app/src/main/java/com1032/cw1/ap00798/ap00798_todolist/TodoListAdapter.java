@@ -69,6 +69,14 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
             }
         });
 
+        // Set click listener for the actual todoList card
+        viewHolder.cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
         // Grammar is important ;)
         if (todoListItem.getItemCount() >= 2) {
             // Use the getString method from the context to allow for a substitution to be made in the string
