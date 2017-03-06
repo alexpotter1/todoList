@@ -89,7 +89,7 @@ public class TodoListManager implements Serializable {
         }
 
         // If it's not in the list
-        throw new IllegalArgumentException(String.format("Todo List %s not found", todoListName));
+        return null;
     }
 
     /**

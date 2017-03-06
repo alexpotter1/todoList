@@ -13,6 +13,7 @@
     <string name="add_new_list_activity_ButtonContent">Done</string>
     <string name="add_new_list_activity_EditTextHint">Type a name&#8230;</string>
     <string name="add_new_list_emptyEditText_snackbar">Please type a name for your new list.</string>
+    <string name="add_new_list_nameTaken_snackbar">A list already exists with this name.</string>
     <string name="deleted_list_snackbar">Deleted the todo list.</string>
     <string name="ImageButton_accessibility_contentDesc">Delete todo list</string>
 </resources>

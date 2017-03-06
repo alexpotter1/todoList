@@ -29,6 +29,7 @@ public class AddNewTodoListActivity extends AppCompatActivity {
 
                 String listName = mEditTextField.getText().toString();
                 TodoListAdapter mRecyclerViewAdapter = MainActivity.getAdapter();
+                TodoList existingTodoList = todoListManagerInstance.getTodoList(listName);
 
                 // Let the user know they have to actually type something...
 
@@ -44,12 +45,22 @@ public class AddNewTodoListActivity extends AppCompatActivity {
                         // Will execute on devices running older versions than Marshmallow
                         Toast.makeText(AddNewTodoListActivity.this, R.string.add_new_list_emptyEditText_snackbar, Toast.LENGTH_SHORT).show();
                     }
-                }
+                } else if (existingTodoList != null) {
+                    // Check if a list already exists with the same name - if it's not null, it must already exist
 
-                // Make a new list, with no items
-                todoListManagerInstance.createNewTodoList(listName);
-                mRecyclerViewAdapter.notifyDataSetChanged();
-                finish();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        // Will execute on devices running Marshmallow or newer
+                        Snackbar.make(view, R.string.add_new_list_nameTaken_snackbar, Snackbar.LENGTH_LONG).show();
+                    } else {
+                        // Will execute on devices running older versions than Marshmallow
+                        Toast.makeText(AddNewTodoListActivity.this, R.string.add_new_list_nameTaken_snackbar, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // Make a new list, with no items
+                    todoListManagerInstance.createNewTodoList(listName);
+                    mRecyclerViewAdapter.notifyDataSetChanged();
+                    finish();
+                }
 
 
             }
