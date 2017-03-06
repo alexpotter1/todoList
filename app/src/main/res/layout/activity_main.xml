@@ -31,6 +31,7 @@
         android:layout_margin="24sp"
         android:src="@drawable/ic_menu_black_24dp"
         android:tint="@android:color/white"
-        app:fabSize="normal"/>
+        app:fabSize="normal"
+        app:layout_behavior="com1032.cw1.ap00798.ap00798_todolist.HideFABScroll"/>
 
 </android.support.design.widget.CoordinatorLayout>

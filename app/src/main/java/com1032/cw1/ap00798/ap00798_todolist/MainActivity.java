@@ -1,22 +1,29 @@
 package com1032.cw1.ap00798.ap00798_todolist;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.util.AttributeSet;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity {
@@ -115,6 +122,16 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
 
         // Set the adapter for the RecyclerView (via the manager)
+        todoListManagerInstance.createNewTodoList("list 1");
+        todoListManagerInstance.createNewTodoList("list 2");
+        todoListManagerInstance.createNewTodoList("list 3");
+        todoListManagerInstance.createNewTodoList("list 4");
+        todoListManagerInstance.createNewTodoList("list 5");
+        todoListManagerInstance.createNewTodoList("list 6");
+        todoListManagerInstance.createNewTodoList("list 7");
+        todoListManagerInstance.createNewTodoList("list 8");
+        todoListManagerInstance.createNewTodoList("list 9");
+        todoListManagerInstance.createNewTodoList("list 10");
         mRecyclerViewAdapter = TodoListManager.setupTodoListAdapterForRecyclerView(this, mRecyclerView);
 
         this.closeFabSubmenu();
@@ -144,9 +161,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openFabSubmenu() {
+        /*for (LinearLayout fabSubmenuElement : this.mFabSubmenuElements) {
+            fabSubmenuElement.setVisibility(View.VISIBLE);
+        }*/
+
+        // Animate the submenu buttons
+        Animation show_menu = AnimationUtils.loadAnimation(getApplication(), R.anim.fab_expand_menu);
+
         for (LinearLayout fabSubmenuElement : this.mFabSubmenuElements) {
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fabSubmenuElement.getLayoutParams();
+            // Set the margin for the whole FAB layout because we have expanded
+            layoutParams.bottomMargin += (int) (fabSubmenuElement.getHeight() * 0.25);
+            fabSubmenuElement.setLayoutParams(layoutParams);
+            fabSubmenuElement.startAnimation(show_menu);
+            fabSubmenuElement.setClickable(true);
+
+            // Set as invisible by default, so set to be visible here
             fabSubmenuElement.setVisibility(View.VISIBLE);
         }
+
         Drawable bigFabCloseIcon = (Drawable) ContextCompat.getDrawable(this, R.drawable.ic_close_black_24dp);
 
         // Icon is black, so set it to white here (white = 0xffffffff)
@@ -157,9 +190,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void closeFabSubmenu() {
+        /*for (LinearLayout fabSubmenuElement : this.mFabSubmenuElements) {
+            fabSubmenuElement.setVisibility(View.INVISIBLE);
+        }*/
+
+        // Animate the closing of the menu
+        Animation hide_menu = AnimationUtils.loadAnimation(getApplication(), R.anim.fab_close_menu);
+
         for (LinearLayout fabSubmenuElement : this.mFabSubmenuElements) {
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fabSubmenuElement.getLayoutParams();
+            // Update the new margin for the whole FAB frame layout, because the menu is closed now
+            layoutParams.bottomMargin -= (int) (fabSubmenuElement.getHeight() * 0.25);
+            fabSubmenuElement.setLayoutParams(layoutParams);
+            fabSubmenuElement.startAnimation(hide_menu);
+            fabSubmenuElement.setClickable(true);
+
+            // Hide items again
             fabSubmenuElement.setVisibility(View.INVISIBLE);
         }
+
         Drawable bigFabMenuIcon = (Drawable) ContextCompat.getDrawable(this, R.drawable.ic_menu_black_24dp);
 
         // Again, this vector is black so set to white
