@@ -5,7 +5,12 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +26,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton mBigFab;
@@ -29,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private static TodoListAdapter mRecyclerViewAdapter;
     private LinearLayoutManager mLLM;
+    private BottomSheetBehavior bsb;
 
     private TodoListManager todoListManagerInstance;
 
@@ -40,6 +50,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // Hide the bottom sheet initially
+        View bottomSheet = this.findViewById(R.id.bottom_sheet);
+        this.bsb = BottomSheetBehavior.from(bottomSheet);
+        this.bsb.setHideable(true);
+        this.bsb.setState(BottomSheetBehavior.STATE_HIDDEN);
 
         todoListManagerInstance = TodoListManager.getManagerInstance();
 
@@ -80,6 +96,11 @@ public class MainActivity extends AppCompatActivity {
                 builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int which) {
+                            // Dismiss expanded info card, if it exists
+                            if (bsb != null) {
+                                bsb.setState(BottomSheetBehavior.STATE_HIDDEN);
+                            }
+                            
                             // Delete all tasks, update adapter for new data
                             todoListManagerInstance.removeAllTodoLists();
                             mRecyclerViewAdapter.notifyDataSetChanged();

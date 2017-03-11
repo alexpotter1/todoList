@@ -16,4 +16,5 @@
     <string name="add_new_list_nameTaken_snackbar">A list already exists with this name.</string>
     <string name="deleted_list_snackbar">Deleted the todo list.</string>
     <string name="ImageButton_accessibility_contentDesc">Delete todo list</string>
+    <string name="todoList_transition">todoList_toExpanded</string>
 </resources>

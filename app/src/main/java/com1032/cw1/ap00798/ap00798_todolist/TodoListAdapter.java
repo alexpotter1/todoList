@@ -2,7 +2,10 @@ package com1032.cw1.ap00798.ap00798_todolist;
 
 import android.content.Context;
 import android.os.Build;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,6 +23,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
     private List<TodoList> todoLists;
     private Context context;
     private TodoListManager todoListManagerInstance;
+    private BottomSheetBehavior bsb = null;
 
     // State of each CardView (and subsequent items) that is displayed in the Recycler View
     protected static class ViewHolder extends RecyclerView.ViewHolder {
@@ -55,6 +59,12 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         viewHolder.deleteTodoListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // Collapse the expanded info card, if it exists
+                if (bsb != null) {
+                    bsb.setState(BottomSheetBehavior.STATE_HIDDEN);
+                }
+
                 // Remove the todoList via its manager, this will update this adapter as well
                 todoListManagerInstance.removeTodoList(viewHolder.listName.getText().toString());
                 notifyDataSetChanged();
@@ -73,7 +83,21 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         viewHolder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.v("test", "card clicked");
+                // Need to resolve the parent activity given we're in the adapter class
+                AppCompatActivity activity = (AppCompatActivity) view.getContext();
+                View bottomSheet = activity.findViewById(R.id.bottom_sheet);
+
+                bsb = BottomSheetBehavior.from(bottomSheet);
+
+                TextView todoListExpandedName = (TextView) bottomSheet.findViewById(R.id.todoListExpandedName);
+                todoListExpandedName.setText(viewHolder.listName.getText());
+
+                // User can dismiss with swipe down
+                if (bsb.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                    bsb.setState(BottomSheetBehavior.STATE_HIDDEN);
+                } else {
+                    bsb.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
             }
         });
 
