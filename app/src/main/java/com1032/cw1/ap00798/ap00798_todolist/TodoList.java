@@ -38,6 +38,10 @@ public class TodoList implements Serializable {
         }
     }
 
+    public String getTodoListItem(int position) {
+        return this.todoListItems.get(position);
+    }
+
     public int getItemCount() {
         return this.todoListItems.size();
     }

@@ -27,7 +27,7 @@ import java.util.Iterator;
 
 import com1032.cw1.ap00798.ap00798_todolist.db.DBManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TodoCardListDialogFragment.Listener {
 
     private FloatingActionButton mBigFab;
     private LinearLayout[] mFabSubmenuElements = new LinearLayout[2];
@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private TodoListAdapter mRecyclerViewAdapter;
     private LinearLayoutManager mLLM;
-    private BottomSheetBehavior bsb;
     private DBManager dbManager = DBManager.getManagerInstance(this);
 
     private TodoListManager todoListManagerInstance = TodoListManager.getManagerInstance(this);
@@ -50,10 +49,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // Hide the bottom sheet initially
-        View bottomSheet = this.findViewById(R.id.bottom_sheet);
-        this.bsb = BottomSheetBehavior.from(bottomSheet);
-        this.bsb.setHideable(true);
-        this.bsb.setState(BottomSheetBehavior.STATE_HIDDEN);
 
         ViewGroup mView = (ViewGroup) this.findViewById(android.R.id.content);
 
@@ -92,10 +87,6 @@ public class MainActivity extends AppCompatActivity {
                 builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int which) {
-                        // Dismiss expanded info card, if it exists
-                        if (bsb != null) {
-                            bsb.setState(BottomSheetBehavior.STATE_HIDDEN);
-                        }
 
                         // Delete all tasks, update adapter for new data, update DB
                         todoListManagerInstance.removeAllTodoLists();
@@ -144,11 +135,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
 
-        // Close the db connection for good measure
-        dbManager.closeDBConnection();
+        /* This function passes the lists to the database manager one by one, saving them
+           just in case something was missed.
+         */
+        todoListManagerInstance.saveAllTodoLists();
     }
 
     @Override
@@ -251,4 +244,9 @@ public class MainActivity extends AppCompatActivity {
         mBigFab.setImageDrawable(bigFabMenuIcon);
         isFabOpen = false;
     }
+
+    @Override
+    public void onTodoCardClicked(int position) {}
+
+
 }

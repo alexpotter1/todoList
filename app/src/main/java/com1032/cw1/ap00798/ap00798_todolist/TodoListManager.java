@@ -18,7 +18,7 @@ import com1032.cw1.ap00798.ap00798_todolist.db.DBManager;
 public class TodoListManager implements Serializable {
 
     private static TodoListManager manager;
-    private static List<TodoList> todoLists = new ArrayList<TodoList>();
+    private List<TodoList> todoLists = new ArrayList<TodoList>();
     private TodoListAdapter mRecyclerViewAdapter = null;
     private DBManager dbManager;
 
@@ -55,6 +55,7 @@ public class TodoListManager implements Serializable {
             throw new RuntimeException("Run setupTodoListAdapterForRecyclerView first!");
         }
 
+        // Update the adapter so that it can show the new list
         mRecyclerViewAdapter.updateDataset(todoLists);
 
         // Handle DB sync
@@ -100,6 +101,7 @@ public class TodoListManager implements Serializable {
             throw new RuntimeException("Run setupTodoListAdapterForRecyclerView first!");
         }
 
+        // Refresh the data set for the recycler view so that it can reflect changes
         mRecyclerViewAdapter.updateDataset(todoLists);
 
         // Handle DB sync
@@ -116,6 +118,21 @@ public class TodoListManager implements Serializable {
 
         // If it's not in the list
         return null;
+    }
+
+    public TodoList getTodoList(int position) {
+        return todoLists.get(position);
+    }
+
+    /**
+     * Call this only when the application is going to close.
+     */
+    public void saveAllTodoLists() {
+        for (TodoList list : this.todoLists) {
+            dbManager.putObject(list, "TodoList");
+        }
+
+        dbManager.closeDBConnection();
     }
 
     /**

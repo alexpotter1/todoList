@@ -15,6 +15,9 @@
     <string name="add_new_list_emptyEditText_snackbar">Please type a name for your new list.</string>
     <string name="add_new_list_nameTaken_snackbar">A list already exists with this name.</string>
     <string name="deleted_list_snackbar">Deleted the todo list.</string>
-    <string name="ImageButton_accessibility_contentDesc">Delete todo list</string>
-    <string name="todoList_transition">todoList_toExpanded</string>
+    <string name="ImageButton_deleteList_accessibility_contentDesc">Delete todo list</string>
+    <string name="ImageButton_addTaskToList_accessibility_contentDesc">Add task to list</string>
+    <string name="todoList_addTask_name">Task name</string>
+    <string name="todoList_addTask_title">Add a new task</string>
+    <string name="todoList_addTask_message">Please enter the name of your task that you want to add.</string>
 </resources>

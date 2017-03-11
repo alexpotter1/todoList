@@ -1,15 +1,19 @@
 package com1032.cw1.ap00798.ap00798_todolist;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.media.Image;
 import android.os.Build;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +34,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         protected TextView listName;
         protected TextView listItemCount;
         protected ImageButton deleteTodoListButton;
+        protected ImageButton addTaskToListButton;
 
         public ViewHolder(View view) {
             super(view);
@@ -38,6 +43,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
             this.listName = (TextView) view.findViewById(R.id.todoCard_ListName);
             this.listItemCount = (TextView) view.findViewById(R.id.todoCard_ListItemCount);
             this.deleteTodoListButton = (ImageButton) view.findViewById(R.id.todoCard_Delete);
+            this.addTaskToListButton = (ImageButton) view.findViewById(R.id.todoCard_addTask);
         }
     }
 
@@ -49,9 +55,9 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(final TodoListAdapter.ViewHolder viewHolder, int position) {
-        TodoList todoListItem = this.todoLists.get(position);
+        final TodoList todoList = this.todoLists.get(position);
 
-        viewHolder.listName.setText(todoListItem.getTodoListName());
+        viewHolder.listName.setText(todoList.getTodoListName());
 
         // Set click listener for the delete button on the CardView
         viewHolder.deleteTodoListButton.setOnClickListener(new View.OnClickListener() {
@@ -77,36 +83,51 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
             }
         });
 
+        viewHolder.addTaskToListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                final EditText taskNameInput = new EditText(context);
+                taskNameInput.setHint(R.string.todoList_addTask_name);
+                builder.setTitle(R.string.todoList_addTask_title);
+                builder.setMessage(R.string.todoList_addTask_message);
+                builder.setView(taskNameInput);
+                builder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (!(taskNameInput.getText().toString().equals(""))) {
+                            todoList.addItemToList(taskNameInput.getText().toString()); 
+                        }
+                    }
+                });
+
+                builder.create().show();
+            }
+        });
+
         // Set click listener for the actual todoList card
         viewHolder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Need to resolve the parent activity given we're in the adapter class
                 AppCompatActivity activity = (AppCompatActivity) view.getContext();
-                View bottomSheet = activity.findViewById(R.id.bottom_sheet);
 
-                bsb = BottomSheetBehavior.from(bottomSheet);
-
-                TextView todoListExpandedName = (TextView) bottomSheet.findViewById(R.id.todoListExpandedName);
-                todoListExpandedName.setText(viewHolder.listName.getText());
-
-                // User can dismiss with swipe down
-                if (bsb.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-                    bsb.setState(BottomSheetBehavior.STATE_HIDDEN);
-                } else {
-                    bsb.setState(BottomSheetBehavior.STATE_EXPANDED);
+                // Only display expanded fragment if there's actually tasks in the list
+                if (todoList.getItemCount() > 0) {
+                    TodoCardListDialogFragment.setParentTodoList(todoList);
+                    TodoCardListDialogFragment.newInstance(todoList.getItemCount()).show(activity.getSupportFragmentManager(), "expanded");
                 }
+
             }
         });
 
         // Grammar is important ;)
-        if (todoListItem.getItemCount() >= 2) {
+        if (todoList.getItemCount() >= 2) {
             // Use the getString method from the context to allow for a substitution to be made in the string
-            viewHolder.listItemCount.setText(this.context.getString(R.string.list_items_2_plus, todoListItem.getItemCount()));
-        } else if (todoListItem.getItemCount() == 0) {
+            viewHolder.listItemCount.setText(this.context.getString(R.string.list_items_2_plus, todoList.getItemCount()));
+        } else if (todoList.getItemCount() == 0) {
             viewHolder.listItemCount.setText(R.string.list_items_0);
         } else {
-            viewHolder.listItemCount.setText(this.context.getString(R.string.list_items_1, todoListItem.getItemCount()));
+            viewHolder.listItemCount.setText(this.context.getString(R.string.list_items_1, todoList.getItemCount()));
         }
     }
 
@@ -120,6 +141,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
     public int getItemCount() {
         return this.todoLists.size();
     }
+
 
     public void updateDataset(List<TodoList> newTodoList) {
         this.todoLists = newTodoList;
