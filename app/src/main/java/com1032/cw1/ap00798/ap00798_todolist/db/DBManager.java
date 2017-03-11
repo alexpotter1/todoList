@@ -22,7 +22,7 @@ import com1032.cw1.ap00798.ap00798_todolist.TodoListManager;
 
 public class DBManager {
 
-    public static DBManager managerInstance;
+    private static DBManager managerInstance;
     private static TodoReaderDBHelper dbHelper;
 
     private Gson gson;
@@ -77,7 +77,7 @@ public class DBManager {
 
         Cursor cursor = getDBReadable().query(TodoReaderContract.TodoEntry.TABLE_NAME, projection, null, null, null, null, null, null);
 
-        ArrayList<Serializable> serialisedObjects = new ArrayList<Serializable>();
+        List<Serializable> serialisedObjects = new ArrayList<Serializable>();
 
         while (cursor.moveToNext()) {
             String serialised = cursor.getString(cursor.getColumnIndexOrThrow(TodoReaderContract.TodoEntry.COLUMN_NAME_SERIALISED));

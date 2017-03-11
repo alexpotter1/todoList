@@ -28,7 +28,7 @@ public class AddNewTodoListActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 String listName = mEditTextField.getText().toString();
-                TodoListAdapter mRecyclerViewAdapter = MainActivity.getAdapter();
+                TodoListAdapter mRecyclerViewAdapter = todoListManagerInstance.getAdapter();
                 TodoList existingTodoList = todoListManagerInstance.getTodoList(listName);
 
                 // Let the user know they have to actually type something...

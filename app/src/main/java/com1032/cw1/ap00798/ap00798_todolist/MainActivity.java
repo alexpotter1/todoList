@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout[] mFabSubmenuElements = new LinearLayout[2];
 
     private RecyclerView mRecyclerView;
-    private static TodoListAdapter mRecyclerViewAdapter;
+    private TodoListAdapter mRecyclerViewAdapter;
     private LinearLayoutManager mLLM;
     private BottomSheetBehavior bsb;
 
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
 
         // Set the adapter for the RecyclerView (via the manager)
-        mRecyclerViewAdapter = TodoListManager.setupTodoListAdapterForRecyclerView(this, mRecyclerView);
+        mRecyclerViewAdapter = todoListManagerInstance.setupTodoListAdapterForRecyclerView(this, mRecyclerView);
 
         this.closeFabSubmenu();
 
@@ -223,9 +223,5 @@ public class MainActivity extends AppCompatActivity {
 
         mBigFab.setImageDrawable(bigFabMenuIcon);
         isFabOpen = false;
-    }
-
-    protected static TodoListAdapter getAdapter() {
-        return mRecyclerViewAdapter;
     }
 }

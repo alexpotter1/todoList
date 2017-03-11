@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +18,11 @@ public class TodoListManager implements Serializable {
 
     private static TodoListManager manager;
     private static List<TodoList> todoLists = new ArrayList<TodoList>();
-    private static TodoListAdapter mRecyclerViewAdapter = null;
+    private TodoListAdapter mRecyclerViewAdapter = null;
 
     private TodoListManager() {}
 
-    public static TodoListManager getManagerInstance() {
+    protected static TodoListManager getManagerInstance() {
         if (manager == null) {
             manager = new TodoListManager();
         }
@@ -94,12 +96,21 @@ public class TodoListManager implements Serializable {
     }
 
     /**
+     * Obtain the adapter for the TodoList recycler view.
+     * This may return null if the adapter has not been set (method below)
+     * @return mRecyclerViewAdapter
+     */
+    protected TodoListAdapter getAdapter() {
+        return this.mRecyclerViewAdapter;
+    }
+
+    /**
      * Set the adapter for the recycler view. This keeps the todoLists list inside this class.
      * @param mContext - needed for the TodoListAdapter
      * @param recyclerView - needed for the TodoListAdapter
      * @return mRecyclerViewAdapter - the new TodoListAdapter that was created (so the activity can use it)
      */
-    public static TodoListAdapter setupTodoListAdapterForRecyclerView(Context mContext, RecyclerView recyclerView) {
+    protected TodoListAdapter setupTodoListAdapterForRecyclerView(Context mContext, @NotNull RecyclerView recyclerView) {
 
         mRecyclerViewAdapter = new TodoListAdapter(mContext, todoLists);
         recyclerView.setAdapter(mRecyclerViewAdapter);
