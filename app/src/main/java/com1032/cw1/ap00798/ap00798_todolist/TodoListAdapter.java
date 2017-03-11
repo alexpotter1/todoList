@@ -4,11 +4,9 @@ import android.content.Context;
 import android.os.Build;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +44,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
     public TodoListAdapter(Context context, List<TodoList> todoLists) {
         this.todoLists = todoLists;
         this.context = context;
-        this.todoListManagerInstance = TodoListManager.getManagerInstance();
+        this.todoListManagerInstance = TodoListManager.getManagerInstance(context);
     }
 
     @Override

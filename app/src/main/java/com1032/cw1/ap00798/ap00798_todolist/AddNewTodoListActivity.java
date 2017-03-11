@@ -13,7 +13,7 @@ public class AddNewTodoListActivity extends AppCompatActivity {
 
     private Button mDoneButton;
     private EditText mEditTextField;
-    private TodoListManager todoListManagerInstance = TodoListManager.getManagerInstance();
+    private TodoListManager todoListManagerInstance = TodoListManager.getManagerInstance(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +56,10 @@ public class AddNewTodoListActivity extends AppCompatActivity {
                         Toast.makeText(AddNewTodoListActivity.this, R.string.add_new_list_nameTaken_snackbar, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    // Make a new list, with no items
+                    // Make a new list, with no items, save to DB
                     todoListManagerInstance.createNewTodoList(listName);
                     mRecyclerViewAdapter.notifyDataSetChanged();
+
                     finish();
                 }
 

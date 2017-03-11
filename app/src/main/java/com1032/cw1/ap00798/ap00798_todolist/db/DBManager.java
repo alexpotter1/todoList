@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -14,10 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import com1032.cw1.ap00798.ap00798_todolist.TodoList;
-import com1032.cw1.ap00798.ap00798_todolist.TodoListManager;
 
 /**
  * A Singleton class to handle saving and retrieving data from the SQLite database.
+ * The database connections aren't very optimised for performance.
  */
 
 public class DBManager {
@@ -59,11 +60,18 @@ public class DBManager {
         // First, serialise object to JSON
         String json = gson.toJson(serializableObject);
 
+        Log.v("TEST1234", json);
+
         ContentValues newValues = new ContentValues();
         newValues.put(TodoReaderContract.TodoEntry.COLUMN_NAME_SERIALISED, json);
         newValues.put(TodoReaderContract.TodoEntry.COLUMN_NAME_SERIALISED_TYPE, type);
 
-        this.getDBWritable().insert(TodoReaderContract.TodoEntry.TABLE_NAME, null, newValues);
+        Log.v("TEST1234", newValues.toString());
+
+        // If the table was dropped by a Delete All action, recreate it by calling the DB Helper onCreate()
+        dbHelper.onCreate(this.getDBWritable());
+
+        this.getDBWritable().insertOrThrow(TodoReaderContract.TodoEntry.TABLE_NAME, "", newValues);
     }
 
     /**
@@ -73,6 +81,12 @@ public class DBManager {
      * @return an iterator of all the objects.
      */
     public synchronized Iterator<Serializable> getObjects() {
+
+        /* If Delete All was invoked, this getObjects() method would fail (as the table was dropped),
+           so call onCreate to make a new table if it doesn't exist.
+         */
+        dbHelper.onCreate(this.getDBWritable());
+
         String[] projection = new String[] {TodoReaderContract.TodoEntry.COLUMN_NAME_SERIALISED, TodoReaderContract.TodoEntry.COLUMN_NAME_SERIALISED_TYPE};
 
         Cursor cursor = getDBReadable().query(TodoReaderContract.TodoEntry.TABLE_NAME, projection, null, null, null, null, null, null);
@@ -91,6 +105,32 @@ public class DBManager {
     }
 
     /**
+     * This deletes a record from the database.
+     * Used when user clicks the delete button on a todolist card.
+     *
+     * This method uses the google-gson library from https://github.com/google/gson
+     * @param serializableObject - An object to be serialised. Must implement Serializable for safety.
+     */
+    public synchronized void deleteObject(Serializable serializableObject) {
+        // Serialise to JSON to compare with JSON strings in DB
+        String json = gson.toJson(serializableObject);
+
+        String selection = TodoReaderContract.TodoEntry.COLUMN_NAME_SERIALISED + " LIKE ?";
+        String[] preparedArgs = new String[] { json };
+
+        this.getDBWritable().delete(TodoReaderContract.TodoEntry.TABLE_NAME, selection, preparedArgs);
+    }
+
+    /**
+     * Deletes all of the DB records.
+     * Call this when the user clicks on the 'Delete All' button.
+     */
+    public synchronized void deleteAllObjects() {
+        // Get rid of everything in the table
+        this.getDBWritable().execSQL("DROP TABLE " + TodoReaderContract.TodoEntry.TABLE_NAME);
+    }
+
+    /**
      * This only supports certain types, as this is only meant to be used with TodoList objects.
      * @return the associated type from a string.
      */
@@ -98,15 +138,12 @@ public class DBManager {
         switch (string) {
             case "TodoList":
                 return TodoList.class;
-            case "TodoListManager":
-                return TodoListManager.class;
             default:
                 return Serializable.class;
         }
     }
 
-
-
-
-
+    public void closeDBConnection() {
+        dbHelper.close();
+    }
 }

@@ -10,7 +10,7 @@ public class TodoReaderDBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "TodoReader.db";
 
     private static final String DB_CREATE_ENTRIES = new StringBuffer()
-            .append("CREATE TABLE ")
+            .append("CREATE TABLE IF NOT EXISTS ")
             .append(TodoReaderContract.TodoEntry.TABLE_NAME)
             .append(" (")
             .append(TodoReaderContract.TodoEntry.COLUMN_NAME_ID)

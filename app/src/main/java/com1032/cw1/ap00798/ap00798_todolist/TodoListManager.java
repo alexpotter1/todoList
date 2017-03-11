@@ -1,7 +1,6 @@
 package com1032.cw1.ap00798.ap00798_todolist;
 
 import android.content.Context;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
@@ -9,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import com1032.cw1.ap00798.ap00798_todolist.db.DBManager;
 
 /**
  * This is a Singleton class that keeps track of all of the separate TodoList items.
@@ -19,12 +20,15 @@ public class TodoListManager implements Serializable {
     private static TodoListManager manager;
     private static List<TodoList> todoLists = new ArrayList<TodoList>();
     private TodoListAdapter mRecyclerViewAdapter = null;
+    private DBManager dbManager;
 
-    private TodoListManager() {}
+    private TodoListManager(Context context) {
+        this.dbManager = DBManager.getManagerInstance(context);
+    }
 
-    protected static TodoListManager getManagerInstance() {
+    protected static TodoListManager getManagerInstance(Context context) {
         if (manager == null) {
-            manager = new TodoListManager();
+            manager = new TodoListManager(context);
         }
 
         return manager;
@@ -52,12 +56,23 @@ public class TodoListManager implements Serializable {
         }
 
         mRecyclerViewAdapter.updateDataset(todoLists);
+
+        // Handle DB sync
+        // Args: (Serializable object, String objectType)
+        this.dbManager.putObject(this.getTodoList(todoListName), "TodoList");
+    }
+
+    public void addTodoListFromDB(@NotNull TodoList list) {
+        todoLists.add(list);
     }
 
     public void removeTodoList(String todoListName) {
 
+        TodoList removed = null;
+
         for (TodoList todoList : todoLists) {
             if (todoList.getTodoListName().equals(todoListName)) {
+                removed = todoList;
                 todoLists.remove(todoList);
 
                 // Stop once we have removed this.
@@ -70,6 +85,11 @@ public class TodoListManager implements Serializable {
         }
 
         mRecyclerViewAdapter.updateDataset(todoLists);
+
+        // Handle DB sync
+        if (removed != null) {
+            this.dbManager.deleteObject(removed);
+        }
     }
 
     public void removeAllTodoLists() {
@@ -81,6 +101,9 @@ public class TodoListManager implements Serializable {
         }
 
         mRecyclerViewAdapter.updateDataset(todoLists);
+
+        // Handle DB sync
+        this.dbManager.deleteAllObjects();
     }
 
     public TodoList getTodoList(String todoListName) {

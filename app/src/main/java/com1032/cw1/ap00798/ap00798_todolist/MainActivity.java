@@ -5,12 +5,8 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,9 +22,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.util.List;
+import java.io.Serializable;
+import java.util.Iterator;
+
+import com1032.cw1.ap00798.ap00798_todolist.db.DBManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,8 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private TodoListAdapter mRecyclerViewAdapter;
     private LinearLayoutManager mLLM;
     private BottomSheetBehavior bsb;
+    private DBManager dbManager = DBManager.getManagerInstance(this);
 
-    private TodoListManager todoListManagerInstance;
+    private TodoListManager todoListManagerInstance = TodoListManager.getManagerInstance(this);
 
     private boolean isFabOpen = true;
 
@@ -56,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
         this.bsb = BottomSheetBehavior.from(bottomSheet);
         this.bsb.setHideable(true);
         this.bsb.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-        todoListManagerInstance = TodoListManager.getManagerInstance();
 
         ViewGroup mView = (ViewGroup) this.findViewById(android.R.id.content);
 
@@ -94,25 +90,26 @@ public class MainActivity extends AppCompatActivity {
                 builder.setTitle(R.string.delete_tasks);
                 builder.setMessage(R.string.delete_tasks_info);
                 builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int which) {
-                            // Dismiss expanded info card, if it exists
-                            if (bsb != null) {
-                                bsb.setState(BottomSheetBehavior.STATE_HIDDEN);
-                            }
-                            
-                            // Delete all tasks, update adapter for new data
-                            todoListManagerInstance.removeAllTodoLists();
-                            mRecyclerViewAdapter.notifyDataSetChanged();
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {
+                        // Dismiss expanded info card, if it exists
+                        if (bsb != null) {
+                            bsb.setState(BottomSheetBehavior.STATE_HIDDEN);
                         }
-                    });
+
+                        // Delete all tasks, update adapter for new data, update DB
+                        todoListManagerInstance.removeAllTodoLists();
+                        mRecyclerViewAdapter.notifyDataSetChanged();
+
+                    }
+                });
                 builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int which) {
-                            // Dismiss dialog without doing anything else
-                            dialogInterface.cancel();
-                        }
-                    });
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {
+                        // Dismiss dialog without doing anything else
+                        dialogInterface.cancel();
+                    }
+                });
                 builder.setIcon(R.drawable.ic_delete_black_24dp);
 
                 AlertDialog alert = builder.create();
@@ -138,11 +135,20 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        // Set the adapter for the RecyclerView (via the manager)
-        mRecyclerViewAdapter = todoListManagerInstance.setupTodoListAdapterForRecyclerView(this, mRecyclerView);
+        // Load todoLists from DB, let the manager know, and set adapter accordingly
+        this.getSerialisedObjectsFromDB();
+        this.mRecyclerViewAdapter = this.todoListManagerInstance.setupTodoListAdapterForRecyclerView(this, this.mRecyclerView);
 
         this.closeFabSubmenu();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // Close the db connection for good measure
+        dbManager.closeDBConnection();
     }
 
     @Override
@@ -166,6 +172,27 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * This gets all of the stored objects from the DB, and tells the manager about them.
+     * This should be called from onCreate().
+     */
+    private void getSerialisedObjectsFromDB() {
+        DBManager dbManager = DBManager.getManagerInstance(MainActivity.this);
+
+        Iterator<Serializable> dbObjectIterator = dbManager.getObjects();
+
+        while (dbObjectIterator.hasNext()) {
+
+            Serializable nextObject = dbObjectIterator.next();
+
+            if (nextObject instanceof TodoList) {
+                this.todoListManagerInstance.addTodoListFromDB((TodoList) nextObject);
+            }
+        }
+
+    }
+
 
     private void openFabSubmenu() {
         /*for (LinearLayout fabSubmenuElement : this.mFabSubmenuElements) {
