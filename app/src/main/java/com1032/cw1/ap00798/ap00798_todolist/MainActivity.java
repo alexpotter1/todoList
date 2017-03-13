@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -13,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -129,6 +129,10 @@ public class MainActivity extends AppCompatActivity implements TodoCardListDialo
         // Load todoLists from DB, let the manager know, and set adapter accordingly
         this.getSerialisedObjectsFromDB();
         this.mRecyclerViewAdapter = this.todoListManagerInstance.setupTodoListAdapterForRecyclerView(this, this.mRecyclerView);
+
+        // Enable swipe to delete for todoList cards
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(this.mRecyclerViewAdapter.setupItemCallback());
+        itemTouchHelper.attachToRecyclerView(this.mRecyclerView);
 
         this.closeFabSubmenu();
 
@@ -259,6 +263,11 @@ public class MainActivity extends AppCompatActivity implements TodoCardListDialo
         isFabOpen = false;
     }
 
+    /**
+     * Needed to allow the TodoCardListDialogFragment to start from this activity
+     * Method does nothing
+     * @param position - unused
+     */
     @Override
     public void onTodoCardClicked(int position) {}
 

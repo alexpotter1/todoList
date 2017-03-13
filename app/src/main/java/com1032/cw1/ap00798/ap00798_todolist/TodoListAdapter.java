@@ -2,14 +2,13 @@ package com1032.cw1.ap00798.ap00798_todolist;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.media.Image;
 import android.os.Build;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +50,39 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
         this.todoLists = todoLists;
         this.context = context;
         this.todoListManagerInstance = TodoListManager.getManagerInstance(context);
+    }
+
+    /**
+     * Swipe to delete todoList card
+     * No dragging directions specified, and either swipe left or right on the card to delete
+     */
+    protected ItemTouchHelper.Callback setupItemCallback() {
+        return new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDirection) {
+                // Delete todoList card from screen, delete from DB
+                String todoListName = todoListManagerInstance.getTodoList(viewHolder.getAdapterPosition()).getTodoListName();
+                todoListManagerInstance.removeTodoList(todoListName);
+
+                // Notifying RecyclerView adapter of change
+                TodoListAdapter.this.notifyDataSetChanged();
+
+                // Display toast/snackbar
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // Will execute on devices running Marshmallow or newer
+                    Snackbar.make(viewHolder.itemView, R.string.deleted_list_snackbar, Snackbar.LENGTH_SHORT).show();
+                } else {
+                    // Will execute on devices running older versions than Marshmallow
+                    Toast.makeText(context, R.string.deleted_list_snackbar, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolderFrom, RecyclerView.ViewHolder viewHolderTo) {
+                return false;
+            }
+        };
     }
 
     @Override

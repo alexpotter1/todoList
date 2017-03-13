@@ -127,7 +127,7 @@ public class DBManager {
      */
     public synchronized void deleteAllObjects() {
         // Get rid of everything in the table
-        this.getDBWritable().execSQL("DROP TABLE " + TodoReaderContract.TodoEntry.TABLE_NAME);
+        this.getDBWritable().execSQL("DROP TABLE IF EXISTS " + TodoReaderContract.TodoEntry.TABLE_NAME);
     }
 
     /**
