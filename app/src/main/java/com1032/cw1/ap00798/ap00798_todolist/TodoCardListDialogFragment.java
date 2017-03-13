@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -97,7 +98,7 @@ public class TodoCardListDialogFragment extends BottomSheetDialogFragment {
 
             taskDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(final View v) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setTitle("Delete Task");
                     builder.setMessage("Are you sure you want to delete the task?");
@@ -112,6 +113,9 @@ public class TodoCardListDialogFragment extends BottomSheetDialogFragment {
                             // Also update the parent list (show item count)
                             TodoListAdapter parentTodoListAdapter = TodoListManager.getManagerInstance(getContext()).getAdapter();
                             parentTodoListAdapter.notifyDataSetChanged();
+
+                            // Hide the modal bottom sheet
+                            TodoCardListDialogFragment.this.onDismiss(dialog);
                         }
                     });
 

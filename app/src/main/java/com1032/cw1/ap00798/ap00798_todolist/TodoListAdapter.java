@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,10 +83,19 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 final EditText taskNameInput = new EditText(context);
+
+                // Set padding on EditText
+                FrameLayout taskNameInputContainer = new FrameLayout(context);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.leftMargin = context.getResources().getDimensionPixelSize(R.dimen.edittext_dialog_margin);
+                params.rightMargin = context.getResources().getDimensionPixelSize(R.dimen.edittext_dialog_margin);
+                taskNameInput.setLayoutParams(params);
+                taskNameInputContainer.addView(taskNameInput);
+
                 taskNameInput.setHint(R.string.todoList_addTask_name);
                 builder.setTitle(R.string.todoList_addTask_title);
                 builder.setMessage(R.string.todoList_addTask_message);
-                builder.setView(taskNameInput);
+                builder.setView(taskNameInputContainer);
                 builder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -100,6 +110,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
                 });
 
                 builder.create().show();
+
             }
         });
 
