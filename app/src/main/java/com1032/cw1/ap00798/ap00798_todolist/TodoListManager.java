@@ -125,14 +125,14 @@ public class TodoListManager implements Serializable {
     }
 
     /**
-     * Call this only when the application is going to close.
+     * Update all of the todoLists.
      */
-    public void saveAllTodoLists() {
-        for (TodoList list : this.todoLists) {
-            dbManager.putObject(list, "TodoList");
-        }
+    public void forceUpdateAllTodoLists() {
+        this.dbManager.deleteAllObjects();
 
-        dbManager.closeDBConnection();
+        for (TodoList list : this.todoLists) {
+            this.dbManager.putObject(list, "TodoList");
+        }
     }
 
     /**

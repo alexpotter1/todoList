@@ -141,7 +141,21 @@ public class MainActivity extends AppCompatActivity implements TodoCardListDialo
         /* This function passes the lists to the database manager one by one, saving them
            just in case something was missed.
          */
-        todoListManagerInstance.saveAllTodoLists();
+        todoListManagerInstance.forceUpdateAllTodoLists();
+    }
+
+    /**
+     * Interesting answer about freeing resources, suggesting the kernel does it anyway
+     * http://stackoverflow.com/a/7739454
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        /*
+        Close this here to save potential reopening of the connection, which is expensive.
+         */
+        this.dbManager.closeDBConnection();
     }
 
     @Override
