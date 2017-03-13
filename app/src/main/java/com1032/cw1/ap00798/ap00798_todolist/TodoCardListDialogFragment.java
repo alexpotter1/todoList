@@ -108,6 +108,10 @@ public class TodoCardListDialogFragment extends BottomSheetDialogFragment {
                             parentList.removeItemFromList(taskName.getText().toString());
                             TodoCardAdapter adapter = new TodoCardAdapter(itemCount);
                             adapter.notifyDataSetChanged();
+
+                            // Also update the parent list (show item count)
+                            TodoListAdapter parentTodoListAdapter = TodoListManager.getManagerInstance(getContext()).getAdapter();
+                            parentTodoListAdapter.notifyDataSetChanged();
                         }
                     });
 

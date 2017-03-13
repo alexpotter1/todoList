@@ -25,7 +25,6 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
     private List<TodoList> todoLists;
     private Context context;
     private TodoListManager todoListManagerInstance;
-    private BottomSheetBehavior bsb = null;
 
     // State of each CardView (and subsequent items) that is displayed in the Recycler View
     protected static class ViewHolder extends RecyclerView.ViewHolder {
@@ -64,11 +63,6 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
             @Override
             public void onClick(View view) {
 
-                // Collapse the expanded info card, if it exists
-                if (bsb != null) {
-                    bsb.setState(BottomSheetBehavior.STATE_HIDDEN);
-                }
-
                 // Remove the todoList via its manager, this will update this adapter as well
                 todoListManagerInstance.removeTodoList(viewHolder.listName.getText().toString());
                 notifyDataSetChanged();
@@ -96,7 +90,11 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHo
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (!(taskNameInput.getText().toString().equals(""))) {
-                            todoList.addItemToList(taskNameInput.getText().toString()); 
+                            // Add the new item to the todoList
+                            todoList.addItemToList(taskNameInput.getText().toString());
+
+                            // Update the parent todoList adapter (show item count)
+                            TodoListAdapter.this.notifyDataSetChanged();
                         }
                     }
                 });
